@@ -2,17 +2,20 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { type ArchetypeScores } from "@/lib/questions";
+import { type ArchetypeScores, archetypeInfo, getArchetypeResults } from "@/lib/questions";
 import { generateClaudeMd, generateUserExplanation } from "@/lib/output-generator";
-import { 
-  FileCode, 
-  Calculator, 
-  Copy, 
-  Check, 
-  Download, 
+import {
+  FileCode,
+  Calculator,
+  Copy,
+  Check,
+  Download,
   RefreshCw,
-  Share2
+  Share2,
+  Mail,
+  Loader2
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -24,9 +27,42 @@ interface ResultsScreenProps {
 
 export function ResultsScreen({ answers, scores, onStartOver }: ResultsScreenProps) {
   const [copiedTab, setCopiedTab] = useState<string | null>(null);
+  const [email, setEmail] = useState("");
+  const [subscribeStatus, setSubscribeStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
 
   const role = typeof answers.q7 === "string" ? answers.q7 : undefined;
   const teacherMode = answers.teacherMode === true;
+
+  // Get archetype info for Loops
+  const { primary, secondary } = getArchetypeResults(scores);
+  const primaryName = archetypeInfo[primary].name;
+  const secondaryName = secondary ? archetypeInfo[secondary].name : null;
+
+  const handleSubscribe = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email || subscribeStatus === "loading") return;
+
+    setSubscribeStatus("loading");
+    try {
+      const response = await fetch("/api/subscribe", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email,
+          archetype: primaryName,
+          secondaryArchetype: secondaryName,
+        }),
+      });
+
+      if (response.ok) {
+        setSubscribeStatus("success");
+      } else {
+        setSubscribeStatus("error");
+      }
+    } catch {
+      setSubscribeStatus("error");
+    }
+  };
 
   const claudeMd = generateClaudeMd({
     answers,
@@ -125,8 +161,54 @@ export function ResultsScreen({ answers, scores, onStartOver }: ResultsScreenPro
           </TabsContent>
         </Tabs>
 
+        {/* Weekly Check-in Section */}
+        <div className="mt-12 rounded-lg border bg-muted/30 p-6">
+          <div className="flex items-center justify-center gap-2 text-sm font-medium">
+            <Mail className="h-4 w-4" />
+            Weekly Learning Check-in
+          </div>
+          <p className="mt-2 text-center text-sm text-muted-foreground">
+            Get a weekly email to reflect on how Claude is adapting to your learning style.
+          </p>
+
+          {subscribeStatus === "success" ? (
+            <div className="mt-4 flex items-center justify-center gap-2 text-sm text-green-600 dark:text-green-400">
+              <Check className="h-4 w-4" />
+              You're subscribed! Check your inbox.
+            </div>
+          ) : (
+            <form onSubmit={handleSubscribe} className="mt-4 flex gap-2 max-w-md mx-auto">
+              <Input
+                type="email"
+                placeholder="your@email.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="flex-1"
+                disabled={subscribeStatus === "loading"}
+              />
+              <Button type="submit" disabled={subscribeStatus === "loading" || !email}>
+                {subscribeStatus === "loading" ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  "Subscribe"
+                )}
+              </Button>
+            </form>
+          )}
+
+          {subscribeStatus === "error" && (
+            <p className="mt-2 text-center text-sm text-red-600 dark:text-red-400">
+              Something went wrong. Please try again.
+            </p>
+          )}
+
+          <p className="mt-3 text-center text-xs text-muted-foreground">
+            Wildly optional. Unsubscribe anytime.
+          </p>
+        </div>
+
         {/* Share Section */}
-        <div className="mt-12 rounded-lg border bg-muted/30 p-6 text-center">
+        <div className="mt-6 rounded-lg border bg-muted/30 p-6 text-center">
           <div className="flex items-center justify-center gap-2 text-sm font-medium">
             <Share2 className="h-4 w-4" />
             Share this tool with others
