@@ -189,7 +189,7 @@ function QuestionContent({
           onChange={(e) => onTextChange(e.target.value)}
           className="h-12 text-base"
         />
-        <p className="text-sm text-muted-foreground">Optional - press Continue to skip</p>
+        <p className="text-sm text-muted-foreground">VERY Optional - press Continue to skip</p>
         {question.hint && (
           <p className="text-xs text-foreground/40 italic">{question.hint}</p>
         )}
