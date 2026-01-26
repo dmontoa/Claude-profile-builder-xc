@@ -1,10 +1,12 @@
 import React from "react"
 import type { Metadata } from 'next'
-import { JetBrains_Mono } from 'next/font/google'
+import { Geist, Geist_Mono } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
 import './globals.css'
 
-const jetbrainsMono = JetBrains_Mono({ subsets: ["latin"] });
+const geistSans = Geist({ subsets: ["latin"], variable: "--font-geist-sans" });
+const geistMono = Geist_Mono({ subsets: ["latin"], variable: "--font-geist-mono" });
+const jetbrainsMono = {}; // Declare jetbrainsMono variable here
 
 export const metadata: Metadata = {
   title: 'Learning Profile Builder - Claude Code',
@@ -47,7 +49,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${jetbrainsMono.className} antialiased`}>
+      <body className={`${geistSans.variable} ${geistMono.variable} font-sans antialiased`}>
         {children}
         <Analytics />
       </body>
