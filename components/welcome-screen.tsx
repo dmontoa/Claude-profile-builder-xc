@@ -23,13 +23,14 @@ export function WelcomeScreen({ onStart }: WelcomeScreenProps) {
           Get Started
         </Button>
 
-        <div className="mt-16 flex flex-col items-center gap-4 px-2">
+        <div className="mt-16 flex flex-col items-start gap-3 rounded-xl border border-border/50 bg-muted/40 px-5 py-4">
           <div className="flex items-center gap-3 text-sm text-foreground/70">
             <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-emerald-500/20 bg-emerald-500/10">
               <Shield className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
             </div>
             <span className="text-left">Your answers never leave your browser. Nothing is stored.</span>
           </div>
+          <div className="h-px w-full bg-border/50" />
           <a
             href="https://github.com/danielmontoyah/claude-learning-profile-builder"
             target="_blank"
