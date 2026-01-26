@@ -147,20 +147,23 @@ function QuestionContent({
             {question.question}
           </h2>
         </div>
-        <div className="flex items-center gap-4 rounded-lg border p-6">
+        <div className="flex items-start gap-4 rounded-lg border p-6">
           <Switch
             id="teacher-mode"
             checked={(answer as boolean) ?? question.defaultValue ?? false}
             onCheckedChange={onToggleChange}
+            className="mt-0.5"
           />
-          <Label htmlFor="teacher-mode" className="flex-1 cursor-pointer">
-            <span className="font-medium">Enable Teacher Mode</span>
+          <div className="flex-1 space-y-2">
+            <Label htmlFor="teacher-mode" className="cursor-pointer text-base font-medium leading-none">
+              Enable Teacher Mode
+            </Label>
             {question.description && (
-              <p className="mt-1 text-sm text-muted-foreground">
+              <p className="text-sm font-normal leading-relaxed text-muted-foreground">
                 {question.description}
               </p>
             )}
-          </Label>
+          </div>
         </div>
       </div>
     );
