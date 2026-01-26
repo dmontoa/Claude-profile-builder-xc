@@ -29,7 +29,7 @@ export function WelcomeScreen({ onStart }: WelcomeScreenProps) {
             <span>Your answers never leave your browser. Nothing is stored.</span>
           </div>
           <a
-            href="https://github.com/danielmontoyah/claude-learning-profile-builder"
+            href="https://github.com/dmontoa/Claude-profile-builder-xc"
             target="_blank"
             rel="noopener noreferrer"
             className="flex items-center gap-2 text-sm text-muted-foreground underline-offset-4 hover:underline"
