@@ -102,15 +102,13 @@ export function ResultsScreen({ answers, scores, onStartOver }: ResultsScreenPro
         {/* Tabs */}
         <Tabs defaultValue="user" className="w-full">
           <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="user" className="gap-2">
+            <TabsTrigger value="user" className="gap-1.5">
               <Calculator className="h-4 w-4" />
-              <span>For You</span>
-              <span className="text-muted-foreground/60 text-xs">(Explanation)</span>
+              For You <span className="font-normal text-muted-foreground/70">(Explanation)</span>
             </TabsTrigger>
-            <TabsTrigger value="claude" className="gap-2">
+            <TabsTrigger value="claude" className="gap-1.5">
               <FileCode className="h-4 w-4" />
-              <span>For Claude</span>
-              <span className="text-muted-foreground/60 text-xs">(Profile.md)</span>
+              For Claude <span className="font-normal text-muted-foreground/70">(profile.md)</span>
             </TabsTrigger>
           </TabsList>
 
@@ -152,11 +150,11 @@ export function ResultsScreen({ answers, scores, onStartOver }: ResultsScreenPro
             </div>
           ) : (
             <>
-              <div className="flex items-center gap-2 text-sm font-medium">
+              <div className="flex items-center gap-2 font-medium">
                 <Mail className="h-4 w-4 text-foreground/60" />
                 <span>Help us know this works for real (SUPER optional)</span>
               </div>
-              <p className="mt-2 text-xs text-foreground/50 leading-relaxed">
+              <p className="mt-3 text-sm text-foreground/60 leading-relaxed">
                 {"We'll send one email per week asking 4 quick things: 1) Did you install the profile? 2) Did you use it? 3) Did it improve your work? 4) Any suggestions? This way we know if profiles actually help or are just placebo."}
               </p>
               <div className="mt-4 flex gap-2">
