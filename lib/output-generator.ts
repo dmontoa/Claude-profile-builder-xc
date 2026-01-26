@@ -10,6 +10,7 @@ interface OutputData {
   answers: Record<string, string | boolean>;
   scores: ArchetypeScores;
   role?: string;
+  userName?: string;
   teacherMode: boolean;
 }
 
@@ -72,6 +73,7 @@ export function generateClaudeMd(data: OutputData): string {
   }
 
   const roleContext = data.role ? `\n## My Role\n${data.role}\n` : "";
+  const nameContext = data.userName ? `\n## My Name\nCall me ${data.userName}.\n` : "";
 
   const teacherModeSection = data.teacherMode
     ? `
@@ -88,7 +90,7 @@ Write it like a senior engineer debriefing a junior—educational, not condescen
     : "";
 
   return `# My Learning Profile
-
+${nameContext}
 ## Learning Archetype: ${primaryInfo.name}${secondary ? ` (with ${secondaryInfo?.name} tendencies)` : ""}
 
 ${primaryInfo.shortDescription}

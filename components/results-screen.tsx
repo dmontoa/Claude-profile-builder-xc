@@ -12,8 +12,11 @@ import {
   Check, 
   Download, 
   RefreshCw,
-  Share2
+  Share2,
+  Mail
 } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 
 interface ResultsScreenProps {
@@ -24,14 +27,18 @@ interface ResultsScreenProps {
 
 export function ResultsScreen({ answers, scores, onStartOver }: ResultsScreenProps) {
   const [copiedTab, setCopiedTab] = useState<string | null>(null);
+  const [email, setEmail] = useState("");
+  const [emailSubmitted, setEmailSubmitted] = useState(false);
 
   const role = typeof answers.q7 === "string" ? answers.q7 : undefined;
+  const userName = typeof answers.userName === "string" ? answers.userName : undefined;
   const teacherMode = answers.teacherMode === true;
 
   const claudeMd = generateClaudeMd({
     answers,
     scores,
     role,
+    userName,
     teacherMode,
   });
 
@@ -39,6 +46,7 @@ export function ResultsScreen({ answers, scores, onStartOver }: ResultsScreenPro
     answers,
     scores,
     role,
+    userName,
     teacherMode,
   });
 
@@ -58,6 +66,12 @@ export function ResultsScreen({ answers, scores, onStartOver }: ResultsScreenPro
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
+  };
+
+  const handleEmailSubmit = async () => {
+    if (!email || !email.includes("@")) return;
+    // For now, just mark as submitted. In production, this would POST to an API.
+    setEmailSubmitted(true);
   };
 
   const shareUrl = "https://learning-profile-builder.vercel.app";
@@ -86,30 +100,17 @@ export function ResultsScreen({ answers, scores, onStartOver }: ResultsScreenPro
         </div>
 
         {/* Tabs */}
-        <Tabs defaultValue="claude" className="w-full">
+        <Tabs defaultValue="user" className="w-full">
           <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="claude" className="gap-2">
-              <FileCode className="h-4 w-4" />
-              For Claude
-            </TabsTrigger>
             <TabsTrigger value="user" className="gap-2">
               <Calculator className="h-4 w-4" />
               For You
             </TabsTrigger>
+            <TabsTrigger value="claude" className="gap-2">
+              <FileCode className="h-4 w-4" />
+              For Claude
+            </TabsTrigger>
           </TabsList>
-
-          <TabsContent value="claude" className="mt-6">
-            <CodeBlock 
-              content={claudeMd} 
-              filename="CLAUDE.md"
-              copied={copiedTab === "claude"}
-              onCopy={() => handleCopy(claudeMd, "claude")}
-              onDownload={() => handleDownload(claudeMd, "CLAUDE.md")}
-            />
-            <p className="mt-4 text-center text-sm text-muted-foreground">
-              Paste into ~/.claude/CLAUDE.md for global settings, or your project root for project-specific
-            </p>
-          </TabsContent>
 
           <TabsContent value="user" className="mt-6">
             <CodeBlock 
@@ -123,10 +124,62 @@ export function ResultsScreen({ answers, scores, onStartOver }: ResultsScreenPro
               {"This breakdown shows how your answers determined your learning archetype. The profile on the 'For Claude' tab is what you give to Claude."}
             </p>
           </TabsContent>
+
+          <TabsContent value="claude" className="mt-6">
+            <CodeBlock 
+              content={claudeMd} 
+              filename="CLAUDE.md"
+              copied={copiedTab === "claude"}
+              onCopy={() => handleCopy(claudeMd, "claude")}
+              onDownload={() => handleDownload(claudeMd, "CLAUDE.md")}
+            />
+            <p className="mt-4 text-center text-sm text-muted-foreground">
+              Paste into ~/.claude/CLAUDE.md for global settings, or your project root for project-specific
+            </p>
+          </TabsContent>
         </Tabs>
 
+        {/* Email Feedback Section */}
+        <div className="mt-12 rounded-lg border border-dashed border-foreground/20 p-6">
+          {emailSubmitted ? (
+            <div className="text-center">
+              <div className="flex items-center justify-center gap-2 text-sm font-medium text-green-600">
+                <Check className="h-4 w-4" />
+                Thanks! We'll check in once a week.
+              </div>
+            </div>
+          ) : (
+            <>
+              <div className="flex items-center gap-2 text-sm font-medium">
+                <Mail className="h-4 w-4 text-foreground/60" />
+                <span>Help us prove this works (SUPER optional)</span>
+              </div>
+              <p className="mt-2 text-xs text-foreground/50 leading-relaxed">
+                {"We'll send one email per week asking 4 quick things: 1) Did you install the profile? 2) Did you use it? 3) Did it improve your work? 4) Any suggestions? This way we know if profiles actually help or are just placebo."}
+              </p>
+              <div className="mt-4 flex gap-2">
+                <Input
+                  type="email"
+                  placeholder="your@email.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="flex-1 text-sm"
+                />
+                <Button 
+                  size="sm" 
+                  variant="outline"
+                  onClick={handleEmailSubmit}
+                  disabled={!email || !email.includes("@")}
+                >
+                  Subscribe
+                </Button>
+              </div>
+            </>
+          )}
+        </div>
+
         {/* Share Section */}
-        <div className="mt-12 rounded-lg border bg-muted/30 p-6 text-center">
+        <div className="mt-8 rounded-lg border bg-muted/30 p-6 text-center">
           <div className="flex items-center justify-center gap-2 text-sm font-medium">
             <Share2 className="h-4 w-4" />
             Share this tool with others
@@ -202,7 +255,7 @@ function CodeBlock({ content, filename, copied, onCopy, onDownload }: CodeBlockP
       </div>
 
       {/* Actions */}
-      <div className="flex gap-2 border-t border-zinc-800 bg-zinc-900 px-4 py-3 dark:bg-zinc-800">
+      <div className="flex justify-center gap-2 border-t border-zinc-800 bg-zinc-900 px-4 py-3 dark:bg-zinc-800">
         <Button
           onClick={onCopy}
           size="sm"
