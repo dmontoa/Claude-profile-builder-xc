@@ -110,7 +110,7 @@ export function ResultsScreen({ answers, scores, onStartOver }: ResultsScreenPro
             <TabsTrigger value="claude" className="gap-2">
               <FileCode className="h-4 w-4" />
               <span>For Claude</span>
-              <span className="text-muted-foreground/60 text-xs">(profile.md)</span>
+              <span className="text-muted-foreground/60 text-xs">(Profile.md)</span>
             </TabsTrigger>
           </TabsList>
 
