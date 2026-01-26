@@ -59,7 +59,7 @@ export const questions: Question[] = [
     type: "choice",
     options: [
       { 
-        label: "Explain WHY it exists and how it fits the bigger system, then show me", 
+        label: "Explain why it exists and how it fits the bigger system, then show me", 
         scores: { systemsThinker: 3, connector: 1 } 
       },
       { 
