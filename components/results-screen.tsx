@@ -152,7 +152,7 @@ export function ResultsScreen({ answers, scores, onStartOver }: ResultsScreenPro
             <>
               <div className="flex items-center gap-2 text-sm font-medium">
                 <Mail className="h-4 w-4 text-foreground/60" />
-                <span>Help us prove this works (SUPER optional)</span>
+                <span>Help us know this works for real (SUPER optional)</span>
               </div>
               <p className="mt-2 text-xs text-foreground/50 leading-relaxed">
                 {"We'll send one email per week asking 4 quick things: 1) Did you install the profile? 2) Did you use it? 3) Did it improve your work? 4) Any suggestions? This way we know if profiles actually help or are just placebo."}
