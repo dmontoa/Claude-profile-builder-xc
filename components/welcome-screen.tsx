@@ -11,7 +11,7 @@ export function WelcomeScreen({ onStart }: WelcomeScreenProps) {
   return (
     <div className="flex min-h-screen flex-col items-center justify-center px-4">
       <div className="mx-auto max-w-xl text-center">
-        <h1 className="text-balance text-3xl font-bold tracking-tight sm:text-4xl">
+        <h1 className="text-balance text-4xl font-bold tracking-tight sm:text-5xl">
           Build Your Claude Learning Profile
         </h1>
         <p className="mt-8 text-pretty text-base leading-relaxed text-foreground/70">
