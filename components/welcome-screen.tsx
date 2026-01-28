@@ -9,7 +9,7 @@ interface WelcomeScreenProps {
 
 export function WelcomeScreen({ onStart }: WelcomeScreenProps) {
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center px-4">
+    <div className="flex min-h-screen flex-col items-center justify-center overflow-y-auto px-4 py-8">
       <div className="mx-auto max-w-xl text-center">
         <h1 className="text-balance text-4xl font-bold tracking-tight sm:text-5xl">
           Build Your Claude Learning Profile
