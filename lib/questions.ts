@@ -59,7 +59,7 @@ export const questions: Question[] = [
     type: "choice",
     options: [
       { 
-        label: "Explain WHY it exists and how it fits the bigger system, then show me", 
+        label: "Explain why it exists and how it fits the bigger system, then show me", 
         scores: { systemsThinker: 3, connector: 1 } 
       },
       { 
@@ -254,7 +254,16 @@ export const questions: Question[] = [
       },
     ],
   },
-  // Section: Your Context (text input) - shown as 10th question
+  // Section: Your Context (name input)
+  {
+    id: "userName",
+    section: "Your Context",
+    question: "What's your name?",
+    hint: "This personalizes the .md document for Claude to address you by name.",
+    type: "text",
+    placeholder: "e.g., Alex, Sam, Jordan",
+  },
+  // Section: Your Context (role input)
   {
     id: "q7",
     section: "Your Context",
@@ -270,7 +279,7 @@ export const questions: Question[] = [
     question: "Want Claude to document your projects as a learning opportunity?",
     hint: "",
     type: "toggle",
-    defaultValue: false,
+    defaultValue: true,
     description: "When a new project is created, Claude will ask if you want a FOR_YOU.md file explaining the project in plain language—architecture, decisions, bugs fixed, lessons learned. Like having a senior engineer explain their work to you.",
   },
 ];

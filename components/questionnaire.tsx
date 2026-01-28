@@ -17,7 +17,9 @@ interface QuestionnaireProps {
 
 export function Questionnaire({ onComplete, onBack }: QuestionnaireProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [answers, setAnswers] = useState<Record<string, string | boolean>>({});
+  const [answers, setAnswers] = useState<Record<string, string | boolean>>({
+    teacherMode: true, // Default to true
+  });
   const [direction, setDirection] = useState<"forward" | "backward">("forward");
 
   const currentQuestion = questions[currentIndex];
@@ -33,10 +35,10 @@ export function Questionnaire({ onComplete, onBack }: QuestionnaireProps) {
 
   const handleNext = () => {
     if (currentIndex === totalQuestions - 1) {
-      // Ensure toggle has a value
+      // Ensure toggle has a value (defaults to true)
       const finalAnswers = {
         ...answers,
-        teacherMode: answers.teacherMode ?? false,
+        teacherMode: answers.teacherMode ?? true,
       };
       onComplete(finalAnswers);
     } else {
@@ -145,35 +147,42 @@ function QuestionContent({
             {question.question}
           </h2>
         </div>
-        <div className="flex items-center gap-4 rounded-lg border p-6">
-          <Switch
-            id="teacher-mode"
-            checked={(answer as boolean) ?? question.defaultValue ?? false}
-            onCheckedChange={onToggleChange}
-          />
-          <Label htmlFor="teacher-mode" className="flex-1 cursor-pointer">
-            <span className="font-medium">Enable Teacher Mode</span>
-            {question.description && (
-              <p className="mt-1 text-sm text-muted-foreground">
-                {question.description}
-              </p>
-            )}
-          </Label>
+        <div className="rounded-lg border p-6">
+          <div className="flex items-center gap-3">
+            <Switch
+              id="teacher-mode"
+              checked={(answer as boolean) ?? question.defaultValue ?? false}
+              onCheckedChange={onToggleChange}
+            />
+            <Label htmlFor="teacher-mode" className="cursor-pointer text-base font-medium">
+              Enable Teacher Mode
+            </Label>
+          </div>
+          {question.description && (
+            <p className="mt-3 text-sm font-normal leading-relaxed text-muted-foreground">
+              {question.description}
+            </p>
+          )}
         </div>
       </div>
     );
   }
 
   if (question.type === "text") {
+    const isContextSection = question.section === "Your Context";
     return (
       <div className="space-y-6">
+        {isContextSection && (
+          <div className="flex items-center gap-2 text-xs uppercase tracking-wider text-foreground/50">
+            <span className="h-px flex-1 bg-border" />
+            <span>{question.section}</span>
+            <span className="h-px flex-1 bg-border" />
+          </div>
+        )}
         <div>
           <h2 className="text-2xl font-semibold tracking-tight sm:text-3xl">
             {question.question}
           </h2>
-          {question.hint && (
-            <p className="mt-3 text-muted-foreground">{question.hint}</p>
-          )}
         </div>
         <Input
           type="text"
@@ -182,20 +191,29 @@ function QuestionContent({
           onChange={(e) => onTextChange(e.target.value)}
           className="h-12 text-base"
         />
-        <p className="text-sm text-muted-foreground">Optional - press Continue to skip</p>
+        <p className="text-sm text-muted-foreground">Very Optional - press Continue to skip</p>
+        {question.hint && (
+          <p className="text-xs text-foreground/40 italic">{question.hint}</p>
+        )}
       </div>
     );
   }
 
+  const isContextSection = question.section === "Your Context";
+  
   return (
     <div className="space-y-6">
+      {isContextSection && (
+        <div className="flex items-center gap-2 text-xs uppercase tracking-wider text-foreground/50">
+          <span className="h-px flex-1 bg-border" />
+          <span>{question.section}</span>
+          <span className="h-px flex-1 bg-border" />
+        </div>
+      )}
       <div>
         <h2 className="text-2xl font-semibold tracking-tight sm:text-3xl">
           {question.question}
         </h2>
-        {question.hint && (
-          <p className="mt-3 text-muted-foreground">{question.hint}</p>
-        )}
       </div>
       <div className="space-y-3">
         {question.options?.map((option) => {
@@ -226,6 +244,9 @@ function QuestionContent({
           );
         })}
       </div>
+      {question.hint && (
+        <p className="text-xs text-foreground/40 italic">{question.hint}</p>
+      )}
     </div>
   );
 }

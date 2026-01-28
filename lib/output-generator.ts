@@ -10,6 +10,7 @@ interface OutputData {
   answers: Record<string, string | boolean>;
   scores: ArchetypeScores;
   role?: string;
+  userName?: string;
   teacherMode: boolean;
 }
 
@@ -260,6 +261,7 @@ export function generateClaudeMd(data: OutputData): string {
   }
 
   const roleContext = data.role || "[YOUR_ROLE]";
+  const nameContext = data.userName ? `Call me ${data.userName}.` : "";
 
   // Teacher mode section
   const teacherModeSection = data.teacherMode
@@ -332,8 +334,11 @@ If yes, create a FOR_YOU.md file in the project directory with:
     notWorkingSignal = "I keep trying to rephrase what you said → Confirm or correct my understanding";
   }
 
-  return `# ${data.role ? `${data.role}'s` : "My"} Learning Profile
+  // Build the header with optional name
+  const headerName = data.userName ? `${data.userName}'s` : (data.role ? `${data.role}'s` : "My");
 
+  return `# ${headerName} Learning Profile
+${nameContext ? `\n${nameContext}\n` : ""}
 ## Quick Reference
 
 | Attribute | Value |

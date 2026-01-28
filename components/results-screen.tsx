@@ -17,6 +17,7 @@ import {
   Mail,
   Loader2
 } from "lucide-react";
+import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 
 interface ResultsScreenProps {
@@ -31,6 +32,7 @@ export function ResultsScreen({ answers, scores, onStartOver }: ResultsScreenPro
   const [subscribeStatus, setSubscribeStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
 
   const role = typeof answers.q7 === "string" ? answers.q7 : undefined;
+  const userName = typeof answers.userName === "string" ? answers.userName : undefined;
   const teacherMode = answers.teacherMode === true;
 
   // Get archetype info for Loops
@@ -68,6 +70,7 @@ export function ResultsScreen({ answers, scores, onStartOver }: ResultsScreenPro
     answers,
     scores,
     role,
+    userName,
     teacherMode,
   });
 
@@ -75,6 +78,7 @@ export function ResultsScreen({ answers, scores, onStartOver }: ResultsScreenPro
     answers,
     scores,
     role,
+    userName,
     teacherMode,
   });
 
@@ -122,34 +126,21 @@ export function ResultsScreen({ answers, scores, onStartOver }: ResultsScreenPro
         </div>
 
         {/* Tabs */}
-        <Tabs defaultValue="claude" className="w-full">
+        <Tabs defaultValue="user" className="w-full">
           <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="claude" className="gap-2">
-              <FileCode className="h-4 w-4" />
-              For Claude
-            </TabsTrigger>
-            <TabsTrigger value="user" className="gap-2">
+            <TabsTrigger value="user" className="gap-1.5">
               <Calculator className="h-4 w-4" />
-              For You
+              For You <span className="font-normal text-muted-foreground/70">(Explanation)</span>
+            </TabsTrigger>
+            <TabsTrigger value="claude" className="gap-1.5">
+              <FileCode className="h-4 w-4" />
+              For Claude <span className="font-normal text-muted-foreground/70">(Profile.md)</span>
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="claude" className="mt-6">
-            <CodeBlock 
-              content={claudeMd} 
-              filename="CLAUDE.md"
-              copied={copiedTab === "claude"}
-              onCopy={() => handleCopy(claudeMd, "claude")}
-              onDownload={() => handleDownload(claudeMd, "CLAUDE.md")}
-            />
-            <p className="mt-4 text-center text-sm text-muted-foreground">
-              Paste into ~/.claude/CLAUDE.md for global settings, or your project root for project-specific
-            </p>
-          </TabsContent>
-
           <TabsContent value="user" className="mt-6">
-            <CodeBlock 
-              content={userExplanation} 
+            <CodeBlock
+              content={userExplanation}
               filename="Your Scoring Breakdown"
               copied={copiedTab === "user"}
               onCopy={() => handleCopy(userExplanation, "user")}
@@ -159,56 +150,72 @@ export function ResultsScreen({ answers, scores, onStartOver }: ResultsScreenPro
               {"This breakdown shows how your answers determined your learning archetype. The profile on the 'For Claude' tab is what you give to Claude."}
             </p>
           </TabsContent>
+
+          <TabsContent value="claude" className="mt-6">
+            <CodeBlock
+              content={claudeMd}
+              filename="CLAUDE.md"
+              copied={copiedTab === "claude"}
+              onCopy={() => handleCopy(claudeMd, "claude")}
+              onDownload={() => handleDownload(claudeMd, "CLAUDE.md")}
+            />
+            <p className="mt-4 text-center text-sm text-muted-foreground">
+              Paste into ~/.claude/CLAUDE.md for global settings, or your project root for project-specific
+            </p>
+          </TabsContent>
         </Tabs>
 
-        {/* Weekly Check-in Section */}
-        <div className="mt-12 rounded-lg border bg-muted/30 p-6">
-          <div className="flex items-center justify-center gap-2 text-sm font-medium">
-            <Mail className="h-4 w-4" />
-            Weekly Learning Check-in
-          </div>
-          <p className="mt-2 text-center text-sm text-muted-foreground">
-            Get a weekly email to reflect on how Claude is adapting to your learning style.
-          </p>
-
+        {/* Email Feedback Section - v0 styling + our Loops logic */}
+        <div className="mt-12 rounded-lg border border-dashed border-foreground/20 p-6">
           {subscribeStatus === "success" ? (
-            <div className="mt-4 flex items-center justify-center gap-2 text-sm text-green-600 dark:text-green-400">
-              <Check className="h-4 w-4" />
-              You're subscribed! Check your inbox.
+            <div className="text-center">
+              <div className="flex items-center justify-center gap-2 text-sm font-medium text-green-600">
+                <Check className="h-4 w-4" />
+                Thanks! We'll check in once a week.
+              </div>
             </div>
           ) : (
-            <form onSubmit={handleSubscribe} className="mt-4 flex gap-2 max-w-md mx-auto">
-              <Input
-                type="email"
-                placeholder="your@email.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="flex-1"
-                disabled={subscribeStatus === "loading"}
-              />
-              <Button type="submit" disabled={subscribeStatus === "loading" || !email}>
-                {subscribeStatus === "loading" ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                ) : (
-                  "Subscribe"
-                )}
-              </Button>
-            </form>
+            <>
+              <div className="flex items-center gap-2 font-medium">
+                <Mail className="h-4 w-4 text-foreground/60" />
+                <span>Help us know this works for real (WILDLY optional)</span>
+              </div>
+              <p className="mt-3 text-sm text-foreground/60 leading-relaxed">
+                {"We'll send one email per week asking 4 quick things: 1) Did you install the profile? 2) Did you use it? 3) Did it improve your work? 4) Any suggestions? This way we know if Profile.md actually improves Claude or is just placebo."}
+              </p>
+              <form onSubmit={handleSubscribe} className="mt-4 flex gap-2">
+                <Input
+                  type="email"
+                  placeholder="your@email.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="flex-1 text-sm"
+                  disabled={subscribeStatus === "loading"}
+                />
+                <Button
+                  type="submit"
+                  size="sm"
+                  variant="outline"
+                  disabled={subscribeStatus === "loading" || !email || !email.includes("@")}
+                >
+                  {subscribeStatus === "loading" ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    "Subscribe"
+                  )}
+                </Button>
+              </form>
+              {subscribeStatus === "error" && (
+                <p className="mt-2 text-sm text-red-600 dark:text-red-400">
+                  Something went wrong. Please try again.
+                </p>
+              )}
+            </>
           )}
-
-          {subscribeStatus === "error" && (
-            <p className="mt-2 text-center text-sm text-red-600 dark:text-red-400">
-              Something went wrong. Please try again.
-            </p>
-          )}
-
-          <p className="mt-3 text-center text-xs text-muted-foreground">
-            Wildly optional. Unsubscribe anytime.
-          </p>
         </div>
 
         {/* Share Section */}
-        <div className="mt-6 rounded-lg border bg-muted/30 p-6 text-center">
+        <div className="mt-8 rounded-lg border bg-muted/30 p-6 text-center">
           <div className="flex items-center justify-center gap-2 text-sm font-medium">
             <Share2 className="h-4 w-4" />
             Share this tool with others
@@ -275,7 +282,7 @@ function CodeBlock({ content, filename, copied, onCopy, onDownload }: CodeBlockP
           <span className="ml-2 text-sm text-zinc-400">{filename}</span>
         </div>
       </div>
-      
+
       {/* Content */}
       <div className="max-h-[400px] overflow-auto p-4">
         <pre className="font-mono text-sm text-zinc-300 whitespace-pre-wrap break-words">
@@ -284,7 +291,7 @@ function CodeBlock({ content, filename, copied, onCopy, onDownload }: CodeBlockP
       </div>
 
       {/* Actions */}
-      <div className="flex gap-2 border-t border-zinc-800 bg-zinc-900 px-4 py-3 dark:bg-zinc-800">
+      <div className="flex justify-center gap-2 border-t border-zinc-800 bg-zinc-900 px-4 py-3 dark:bg-zinc-800">
         <Button
           onClick={onCopy}
           size="sm"
