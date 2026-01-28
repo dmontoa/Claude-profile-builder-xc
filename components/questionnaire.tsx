@@ -86,7 +86,7 @@ export function Questionnaire({ onComplete, onBack }: QuestionnaireProps) {
       </header>
 
       {/* Question Content */}
-      <main className="flex flex-1 items-center justify-center px-4 py-8">
+      <main className="flex flex-1 items-start justify-center overflow-y-auto px-4 py-8">
         <div
           key={currentQuestion.id}
           className={cn(
