@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Input } from "@/components/ui/input";
@@ -26,14 +26,14 @@ export function Questionnaire({ onComplete, onBack }: QuestionnaireProps) {
   const totalQuestions = questions.length;
   const progress = ((currentIndex + 1) / totalQuestions) * 100;
 
-  const canContinue = () => {
+  const canContinue = useCallback(() => {
     const answer = answers[currentQuestion.id];
     if (currentQuestion.type === "text") return true; // Optional
     if (currentQuestion.type === "toggle") return true; // Has default
     return answer !== undefined && answer !== "";
-  };
+  }, [answers, currentQuestion.id, currentQuestion.type]);
 
-  const handleNext = () => {
+  const handleNext = useCallback(() => {
     if (currentIndex === totalQuestions - 1) {
       // Ensure toggle has a value (defaults to true)
       const finalAnswers = {
@@ -45,7 +45,7 @@ export function Questionnaire({ onComplete, onBack }: QuestionnaireProps) {
       setDirection("forward");
       setCurrentIndex((prev) => prev + 1);
     }
-  };
+  }, [currentIndex, totalQuestions, answers, onComplete]);
 
   const handlePrevious = () => {
     if (currentIndex === 0) {
@@ -67,6 +67,22 @@ export function Questionnaire({ onComplete, onBack }: QuestionnaireProps) {
   const handleToggleChange = (checked: boolean) => {
     setAnswers((prev) => ({ ...prev, [currentQuestion.id]: checked }));
   };
+
+  // Handle Enter key to continue to next question
+  const handleKeyDown = useCallback(
+    (e: KeyboardEvent) => {
+      if (e.key === "Enter" && canContinue()) {
+        e.preventDefault();
+        handleNext();
+      }
+    },
+    [canContinue, handleNext]
+  );
+
+  useEffect(() => {
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [handleKeyDown]);
 
   return (
     <div className="flex min-h-screen flex-col">
