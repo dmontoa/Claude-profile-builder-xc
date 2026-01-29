@@ -100,7 +100,7 @@ export function ResultsScreen({ answers, scores, onStartOver }: ResultsScreenPro
     URL.revokeObjectURL(url);
   };
 
-  const shareUrl = "https://learning-profile-builder.vercel.app";
+  const shareUrl = "https://v0-claude-profile-builder.vercel.app";
   const shareText = "I just built my Claude Learning Profile! Answer 10 questions to get a personalized CLAUDE.md that makes Claude Code teach the way YOU learn best.";
 
   const handleShare = (platform: "twitter" | "linkedin" | "whatsapp") => {
@@ -113,7 +113,7 @@ export function ResultsScreen({ answers, scores, onStartOver }: ResultsScreenPro
   };
 
   return (
-    <div className="min-h-screen px-4 py-8">
+    <div className="min-h-screen overflow-y-auto px-4 py-8">
       <div className="mx-auto max-w-3xl">
         {/* Header */}
         <div className="mb-8 text-center">
