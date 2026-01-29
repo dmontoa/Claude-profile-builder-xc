@@ -72,11 +72,6 @@ export function Questionnaire({ onComplete, onBack }: QuestionnaireProps) {
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
       if (e.key === "Enter" && canContinue()) {
-        // Don't trigger if user is typing in a text input
-        const activeElement = document.activeElement;
-        if (activeElement?.tagName === "INPUT") {
-          return;
-        }
         e.preventDefault();
         handleNext();
       }
