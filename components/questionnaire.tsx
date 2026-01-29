@@ -86,11 +86,11 @@ export function Questionnaire({ onComplete, onBack }: QuestionnaireProps) {
       </header>
 
       {/* Question Content */}
-      <main className="flex flex-1 items-start justify-center overflow-y-auto px-4 py-8">
+      <main className="mx-auto w-full max-w-2xl flex-1 px-4 py-8">
         <div
           key={currentQuestion.id}
           className={cn(
-            "w-full max-w-2xl",
+            "w-full",
             "animate-in fade-in-0 duration-300",
             direction === "forward" ? "slide-in-from-right-4" : "slide-in-from-left-4"
           )}
